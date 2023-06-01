@@ -1004,6 +1004,7 @@ class CompanySettings extends BaseSettings
                 '$credit.total',
             ],
             'product_columns' => [
+                '$product.pos',
                 '$product.item',
                 '$product.description',
                 '$product.unit_cost',
@@ -1011,6 +1012,8 @@ class CompanySettings extends BaseSettings
                 '$product.discount',
                 '$product.tax',
                 '$product.line_total',
+                '$product.tax_amount',
+                '$product.line_total_gross',
             ],
             'product_quote_columns' => [
                 '$product.item',

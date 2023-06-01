@@ -14,8 +14,6 @@ namespace App\Utils\Traits;
 use App\Models\Invoice;
 use App\Utils\Helpers;
 use App\Utils\Number;
-use Carbon\Carbon;
-use Illuminate\Support\Str;
 
 /**
  * Class MakesInvoiceValues.
@@ -287,6 +285,7 @@ trait MakesInvoiceValues
             $helpers = new Helpers();
             $_table_type = ltrim($table_type, '$'); // From $product -> product.
 
+            $data[$key][$table_type.'.pos'] = $key + 1;
             $data[$key][$table_type.'.product_key'] = is_null(optional($item)->product_key) ? $item->item : $item->product_key;
             $data[$key][$table_type.'.item'] = is_null(optional($item)->item) ? $item->product_key : $item->item;
             $data[$key][$table_type.'.service'] = is_null(optional($item)->service) ? $item->product_key : $item->service;
@@ -347,20 +346,30 @@ trait MakesInvoiceValues
             // Previously we used to check for tax_rate value,
             // but that's no longer necessary.
 
-            if (isset($item->tax_rate1)) {
-                $data[$key][$table_type.'.tax_rate1'] = floatval($item->tax_rate1).'%';
+            $data[$key][$table_type.'.tax_amount'] = 0;
+
+            if (isset($item->tax_rate1) && $item->tax_rate1 > 0) {
+                $data[$key][$table_type.'.tax_rate1'] = round($item->tax_rate1, 2).'%';
                 $data[$key][$table_type.'.tax1'] = &$data[$key][$table_type.'.tax_rate1'];
+                $data[$key][$table_type.'.tax_amount'] += $item->line_total * ($item->tax_rate1/100);
             }
 
-            if (isset($item->tax_rate2)) {
-                $data[$key][$table_type.'.tax_rate2'] = floatval($item->tax_rate2).'%';
+            if (isset($item->tax_rate2) && $item->tax_rate2 > 0) {
+                $data[$key][$table_type.'.tax_rate2'] = round($item->tax_rate2, 2).'%';
                 $data[$key][$table_type.'.tax2'] = &$data[$key][$table_type.'.tax_rate2'];
+                $data[$key][$table_type.'.tax_amount'] += $item->line_total * ($item->tax_rate2/100);
             }
 
-            if (isset($item->tax_rate3)) {
-                $data[$key][$table_type.'.tax_rate3'] = floatval($item->tax_rate3).'%';
+            if (isset($item->tax_rate3) && $item->tax_rate3 > 0) {
+                $data[$key][$table_type.'.tax_rate3'] = round($item->tax_rate3, 2).'%';
                 $data[$key][$table_type.'.tax3'] = &$data[$key][$table_type.'.tax_rate3'];
+                $data[$key][$table_type.'.tax_amount'] += $item->line_total * ($item->tax_rate3/100);
             }
+
+            $data[$key][$table_type.'.tax_amount'] = round($data[$key][$table_type.'.tax_amount'], 2);
+            $data[$key][$table_type.'.line_total_gross'] = Number::formatMoney($item->line_total + $data[$key][$table_type.'.tax_amount'], $this->client);
+
+            $data[$key][$table_type.'.tax_amount'] = Number::formatMoney($data[$key][$table_type.'.tax_amount'], $this->client);
 
             $data[$key]['task_id'] = property_exists($item, 'task_id') ? $item->task_id : '';
         }

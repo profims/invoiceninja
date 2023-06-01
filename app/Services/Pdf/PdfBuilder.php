@@ -728,6 +728,8 @@ class PdfBuilder
 
                     if ($cell == '$task.rate') {
                         $element['elements'][] = ['element' => 'td', 'content' => $row['$task.cost'], 'properties' => ['data-ref' => 'task_table-task.cost-td']];
+                    } elseif ($cell == '$product.pos') {
+                        $element['elements'][] = ['element' => 'td', 'content' => $row['$product.pos'], 'properties' => ['data-ref' => 'task_table-task.pos-td']];
                     } elseif ($cell == '$product.discount' && !$this->service->company->enable_product_discount) {
                         $element['elements'][] = ['element' => 'td', 'content' => $row['$product.discount'], 'properties' => ['data-ref' => 'product_table-product.discount-td', 'style' => 'display: none;']];
                     } elseif ($cell == '$task.hours') {
@@ -794,6 +796,7 @@ class PdfBuilder
             $helpers = new Helpers();
             $_table_type = ltrim($table_type, '$'); // From $product -> product.
 
+            $data[$key][$table_type.'.pos'] = $key + 1;
             $data[$key][$table_type.'.product_key'] = is_null(optional($item)->product_key) ? $item->item : $item->product_key;
             $data[$key][$table_type.'.item'] = is_null(optional($item)->item) ? $item->product_key : $item->item;
             $data[$key][$table_type.'.service'] = is_null(optional($item)->service) ? $item->product_key : $item->service;
@@ -869,6 +872,7 @@ class PdfBuilder
                 $data[$key][$table_type.'.tax3'] = &$data[$key][$table_type.'.tax_rate3'];
             }
 
+            $data[$key][$table_type.'.line_total_gross'] = $this->service->config->formatMoney($item->line_total + $item->tax_amount);
             $data[$key]['task_id'] = property_exists($item, 'task_id') ? $item->task_id : '';
         }
 

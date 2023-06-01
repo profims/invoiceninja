@@ -600,6 +600,7 @@ class HtmlEngine
         $data['$custom_surcharge3'] = ['value' => Number::formatMoney($this->entity->custom_surcharge3, $this->client) ?: ' ', 'label' => $this->helpers->makeCustomField($this->company->custom_fields, 'surcharge3')];
         $data['$custom_surcharge4'] = ['value' => Number::formatMoney($this->entity->custom_surcharge4, $this->client) ?: ' ', 'label' => $this->helpers->makeCustomField($this->company->custom_fields, 'surcharge4')];
 
+        $data['$product.pos'] = ['value' => '', 'label' => '#'];
         $data['$product.item'] = ['value' => '', 'label' => ctrans('texts.item')];
         $data['$product.date'] = ['value' => '', 'label' => ctrans('texts.date')];
         $data['$product.discount'] = ['value' => '', 'label' => ctrans('texts.discount')];
@@ -613,7 +614,8 @@ class HtmlEngine
         $data['$product.tax_name3'] = ['value' => '', 'label' => ctrans('texts.tax')];
         $data['$product.line_total'] = ['value' => '', 'label' => ctrans('texts.line_total')];
         $data['$product.gross_line_total'] = ['value' => '', 'label' => ctrans('texts.gross_line_total')];
-        $data['$product.tax_amount'] = ['value' => '', 'label' => ctrans('texts.tax')];
+        $data['$product.tax_amount'] = ['value' => '', 'label' => ctrans('texts.tax_amount')];
+        $data['$product.line_total_gross'] = ['value' => '', 'label' => ctrans('texts.line_total_gross')];
         $data['$product.description'] = ['value' => '', 'label' => ctrans('texts.description')];
         $data['$product.unit_cost'] = ['value' => '', 'label' => ctrans('texts.unit_cost')];
         $data['$product.product1'] = ['value' => '', 'label' => $this->helpers->makeCustomField($this->company->custom_fields, 'product1')];

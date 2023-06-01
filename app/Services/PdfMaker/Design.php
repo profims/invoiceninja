@@ -906,10 +906,19 @@ class Design extends BaseDesign
                     // $task.cost => $task.rate
                     // $task.quantity => $task.hours
 
-                    if ($cell == '$task.rate') {
+                    if ($cell == '$product.item') {
+                        $content = $row[$cell];
+                        if ('' !== $row['$product.notes']) {
+                            $content .= ' ' . $row['$product.notes'];
+                        }
+
+                        $element['elements'][] = ['element' => 'td', 'content' => $content, 'properties' => ['data-ref' => "{$_type}_table-" . substr($cell, 1) . '-td']];
+                    } elseif ($cell == '$task.rate') {
                         $element['elements'][] = ['element' => 'td', 'content' => $row['$task.cost'], 'properties' => ['data-ref' => 'task_table-task.cost-td']];
                     } elseif ($cell == '$product.discount' && !$this->company->enable_product_discount) {
                         $element['elements'][] = ['element' => 'td', 'content' => $row['$product.discount'], 'properties' => ['data-ref' => 'product_table-product.discount-td', 'style' => 'display: none;']];
+                    } elseif ($cell == '$product.quantity' && !$this->company->enable_product_quantity) {
+                        $element['elements'][] = ['element' => 'td', 'content' => $row['$product.quantity'], 'properties' => ['data-ref' => 'product_table-product.quantity-td', 'style' => 'display: none; white-space: nowrap;']];
                     } elseif ($cell == '$task.hours') {
                         $element['elements'][] = ['element' => 'td', 'content' => $row['$task.quantity'], 'properties' => ['data-ref' => 'task_table-task.hours-td']];
                     } elseif ($cell == '$product.tax_rate1') {
@@ -918,7 +927,7 @@ class Design extends BaseDesign
                         $element['elements'][] = ['element' => 'td', 'content' => $row[$cell], 'properties' => ['data-ref' => 'product_table-product.tax2-td']];
                     } elseif ($cell == '$product.tax_rate3') {
                         $element['elements'][] = ['element' => 'td', 'content' => $row[$cell], 'properties' => ['data-ref' => 'product_table-product.tax3-td']];
-                    } elseif ($cell == '$product.unit_cost' || $cell == '$task.rate') {
+                    } elseif ($cell == '$product.unit_cost' || $cell == '$product.cost' || $cell == '$product.tax_amount' || $cell == '$product.line_total' || $cell == '$task.rate' || $cell == '$product.line_total_gross') {
                         $element['elements'][] = ['element' => 'td', 'content' => $row[$cell], 'properties' => ['style' => 'white-space: nowrap;', 'data-ref' => "{$_type}_table-" . substr($cell, 1) . '-td']];
                     } else {
                         $element['elements'][] = ['element' => 'td', 'content' => $row[$cell], 'properties' => ['data-ref' => "{$_type}_table-" . substr($cell, 1) . '-td']];
