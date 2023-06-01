@@ -944,7 +944,7 @@ class PdfBuilder
         foreach ($items as $row) {
             $element = ['element' => 'tr', 'elements' => []];
             //checks if we have custom columns in the options array with key $product/$task - looks like unused functionality
-            if (isset($this->service->options[$type]) && !empty($this->service->options[$type])) {
+             if (isset($this->service->options[$type]) && !empty($this->service->options[$type])) {
 
                 $document = new DOMDocument();
                 $document->loadHTML($this->service->options[$type], LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
@@ -973,6 +973,8 @@ class PdfBuilder
 
                     if ($cell == '$task.rate') {
                         $element['elements'][] = ['element' => 'td', 'content' => $row['$task.cost'], 'properties' => ['data-ref' => 'task_table-task.cost-td', 'visi' => $this->visibilityCheck($column_visibility, $cell)]];
+                    } elseif ($cell == '$product.pos') {
+                        $element['elements'][] = ['element' => 'td', 'content' => $row['$product.pos'], 'properties' => ['data-ref' => 'task_table-task.pos-td']];
                     } elseif ($cell == '$product.discount' && !$this->service->company->enable_product_discount) {
                         $element['elements'][] = ['element' => 'td', 'content' => $row['$product.discount'], 'properties' => ['data-ref' => 'product_table-product.discount-td', 'style' => 'display: none;']];
                     } elseif ($cell == '$task.hours') {
@@ -1041,6 +1043,7 @@ class PdfBuilder
             $helpers = new Helpers();
             $_table_type = ltrim($table_type, '$'); // From $product -> product.
 
+            $data[$key][$table_type.'.pos'] = $key + 1;
             //2025-01-28 not sure how we ever got ->item and ->service....
             $data[$key][$table_type . '.product_key'] = $item->product_key ?? $item->item;
             $data[$key][$table_type . '.item'] = $item->item ?? $item->product_key;
@@ -1118,6 +1121,7 @@ class PdfBuilder
                 $data[$key][$table_type . '.tax3'] = &$data[$key][$table_type . '.tax_rate3'];
             }
 
+            $data[$key][$table_type.'.line_total_gross'] = $this->service->config->formatMoney($item->line_total + $item->tax_amount);
             $data[$key]['task_id'] = property_exists($item, 'task_id') ? $item->task_id : '';
         }
 

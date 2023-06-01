@@ -1,0 +1,29 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: .docker/php/Dockerfile
+    volumes:
+      - ./:/app
+
+  node:
+    build:
+      context: .
+      dockerfile: .docker/node/Dockerfile
+    tty: true
+    volumes:
+      - ./:/app
+    depends_on:
+      - php
+
+  nginx:
+    image: nginx:stable
+    depends_on:
+      - php
+    ports:
+      - "${DOCKER_NGINX_PORT}:80"
+    volumes:
+      - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./:/app
+volumes:
+  db_data:
